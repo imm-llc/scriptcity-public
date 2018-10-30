@@ -15,4 +15,4 @@ firewall () {
         exit 0
     fi
 }
-check_lock_file
+firewall
