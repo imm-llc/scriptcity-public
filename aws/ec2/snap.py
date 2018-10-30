@@ -3,29 +3,18 @@ import boto3, datetime, json, requests, os, subprocess
 from datetime import date, timedelta
 from subprocess import call
 CREDS_FILE = "/opt/ec2Snapshots/.env"
+LOG_DIR = "/opt/ec2Snapshots/logs"
+LOG_FILE = "/opt/ec2Snapshots/logs/snap.log"
 with open(CREDS_FILE, "r")as OPEN_CREDS:
 	CREDS = OPEN_CREDS.read().splitlines()
 	ACCESS = CREDS[1]
 	SECRET = CREDS[3]
 	REGION = CREDS[5]
-	CREDS_FILE.close()
+	OPEN_CREDS.close()
 ec2 = boto3.resource('ec2', aws_access_key_id=ACCESS, aws_secret_access_key=SECRET, region_name=REGION)
 client = boto3.client('ec2', aws_access_key_id=ACCESS, aws_secret_access_key=SECRET, region_name=REGION)
 
-def log_dir():
-	CURRENT_DIR = os.getcwd()
-	LOG_DIR = os.path.join(CURRENT_DIR, "logs")
-	LOG_FILE = os.path.join(LOG_DIR, "ec2Snap.log")
-	LOG_DIR_EXIST = os.path.exists(LOG_DIR)
-	if LOG_DIR_EXIST is True:
-		snapshot_instances(LOG_FILE)
-	else:
-		print("Log directory does not exist\nCreating...")
-		print("Created", LOG_DIR)
-		os.mkdir(LOG_DIR, mode=0o750)
-		return log_dir()
-
-def snapshot_instances(LOG_FILE):
+def snapshot_instances():
 	TODAY = date.today()
 	global ec2
 	global client
@@ -81,7 +70,6 @@ def delete_old_snaps(LOG_FILE):
 	TODAY = date.today()
 
 	RETENTION_DAYS = 3
-	TO_DELETE_TAG = TODAY + timedelta(RETENTION_DAYS)
 	MAX_AGE = TODAY - datetime.timedelta(RETENTION_DAYS)
 
 	OLD_SNAPS = client.describe_snapshots(
@@ -138,5 +126,5 @@ def notify():
 	PAYLOAD['icon_emoji'] = EMOJI
 	PAYLOAD['text'] = MSG
 	
-	REQ = requests.post(SLACK_URL, data=json.dumps(PAYLOAD), headers={'Content-Type': 'application/json'})
-log_dir()
+	requests.post(SLACK_URL, data=json.dumps(PAYLOAD), headers={'Content-Type': 'application/json'})
+snapshot_instances()
