@@ -10,13 +10,14 @@ if [ "${COUNT}" == "10" ]
 then
 echo "$(date): shutdown initiated" | tee -a $LOG_FILE
 shutdown
+# Throwback Thursday
 exit 369
 fi
-ping -c 3 -W 2 "${TARGET}" > /dev/null
-if [ "$?" != "0" ]
+if ! ping -c 3 -W 2 "${TARGET}" > /dev/null
 then
 COUNT=$(expr $COUNT + 1)
 sleep 30
+# We're waiting for 10ish minutes to see if the power comes back on
 test_connection
 fi
 }
