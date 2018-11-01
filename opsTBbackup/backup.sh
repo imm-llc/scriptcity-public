@@ -46,7 +46,7 @@ cleanup_old_backups () {
         echo "Removed ${item}" >> "${LOG_FILE}"
         echo "" >> "${LOG_FILE}"
     done
-    for item in $(find /opt/backups -type d -mtime +3)
+    for item in $(find /opt/backups -type d -mtime +3 -maxdepth 1)
     do
         echo "Zipping ${item}" >> "${LOG_FILE}"
         echo "" >> "${LOG_FILE}"
