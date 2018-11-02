@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-import boto3, datetime, json, requests, os, subprocess
+import boto3, datetime, json, requests, os
 from datetime import date, timedelta
-from subprocess import call
+DATE = str(date.today())
 CREDS_FILE = "/opt/ec2Snapshots/.env"
 LOG_DIR = "/opt/ec2Snapshots/logs"
 LOG_FILE = "/opt/ec2Snapshots/logs/snap.log"
+LOG_FILE = "/opt/ec2Snapshots/logs/"+DATE+"-snap.log"
 with open(CREDS_FILE, "r")as OPEN_CREDS:
 	CREDS = OPEN_CREDS.read().splitlines()
 	ACCESS = CREDS[1]
@@ -112,14 +113,17 @@ def delete_old_snaps(LOG_FILE):
 					LF.close()
 	notify()
 def notify():
-	with open(CREDS_FILE, "r")as OPEN_CREDS:
+	global LOG_FILE
+	with open(CREDS_FILE, "r") as OPEN_CREDS:
 		CREDS = OPEN_CREDS.read().splitlines()
 		SLACK_URL = CREDS[7]
 		OPEN_CREDS.close()
+	with open(LOG_FILE, "r") as LOG_FILE:
+		MSG = LOG_FILE.read().strip()
+		LOG_FILE.close()
 	UNAME = 'EC2Snapper'
 	CHANNEL = '#alerts'
 	EMOJI = ':turdel:'
-	MSG = "EC2 instances snapshotted"
 	PAYLOAD = {}
 	PAYLOAD['username'] = UNAME
 	PAYLOAD['channel'] = CHANNEL
