@@ -2,7 +2,7 @@
 # Opstoolbox Backup Script
 # Install in /opt/backups/
 # Cron = 15 3 * * * root /opt/backups/backup.sh & > /opt/backups/cron.log 2>&1
-source .env
+source "/opt/backups.env"
 DATE=$(date +%F)
 BACKUP_DIR=/opt/backups/"${DATE}"
 LOG_FILE="${BACKUP_DIR}/backup.log"
@@ -39,6 +39,7 @@ check_backup_dir_exists () {
 cleanup_old_backups () {
     for item in $(find /opt/backups -name "*.gz" -ctime +5)
     do
+        # You need to run `aws configure` first
         aws s3 cp s3://"${BUCKET}/${FOLDER}/${item}"
         echo "Backing up ${item} to S3" >> "${LOG_FILE}"
         echo "" >> "${LOG_FILE}"
@@ -46,11 +47,11 @@ cleanup_old_backups () {
         echo "Removed ${item}" >> "${LOG_FILE}"
         echo "" >> "${LOG_FILE}"
     done
-    for item in $(find /opt/backups -type d -mtime +3 -maxdepth 1)
+    for item in $(find /opt/backups -maxdepth 1 -type d -mtime +3)
     do
         echo "Zipping ${item}" >> "${LOG_FILE}"
         echo "" >> "${LOG_FILE}"
-        tar -zcf $item.tgz $item
+        tar -zcf ${item}.tgz $item
     done
     main
 }
@@ -98,10 +99,10 @@ main () {
 
     if [ -f "${BACKUP_DIR}/error" ]
     then
-    ./backup_alert.py "${BACKUP_DIR}/backup.log"
-    exit 1
+        /opt/backups/backup_alert.py "${BACKUP_DIR}/backup.log"
+        exit 1
     else
-    exit 0
+        exit 0
     fi
 }
 check_backup_dir_exists
