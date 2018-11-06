@@ -6,6 +6,8 @@ source "/opt/backups.env"
 DATE=$(date +%F)
 BACKUP_DIR=/opt/backups/"${DATE}"
 LOG_FILE="${BACKUP_DIR}/backup.log"
+# Don't bail on error, we want to alert if there's an error
+set +e
 DIRECTORIES=(
     '/opt/ec2Snapshots'
     '/opt/keys'
