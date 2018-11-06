@@ -39,7 +39,7 @@ check_backup_dir_exists () {
 }
 
 cleanup_old_backups () {
-    for item in $(find /opt/backups -name "*.gz" -ctime +5)
+    for item in $(find /opt/backups -name "*.tgz" -ctime +2)
     do
         # You need to run `aws configure` first
         aws s3 cp s3://"${BUCKET}/${FOLDER}/${item}"
