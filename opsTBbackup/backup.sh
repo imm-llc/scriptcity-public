@@ -54,6 +54,7 @@ cleanup_old_backups () {
         echo "Zipping ${item}" >> "${LOG_FILE}"
         echo "" >> "${LOG_FILE}"
         tar -zcf ${item}.tgz $item
+        rm -rf "${item}"
     done
     main
 }
