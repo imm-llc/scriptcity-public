@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Forked from https://github.com/ericoc/zabbix-slack-alertscript
 # Variables
+# Script paramenters = {ALERT.SUBJECT} and {ALERT.MESSAGE}
+# Default subject: Problem {HOST.NAME}
 SUBJECT=$(echo ${1} | cut -d ' ' -f 1)
 SERVER=$(echo ${1} | cut -d ' ' -f 2)
 MESSAGE="$2"
@@ -23,9 +25,6 @@ SLACK_URL='change me'
 USERNAME='Zabbix'
 EMOJI=":zabbix:"
 CHANNEL="#alerts"
-
-# Script paramenters = {ALERT.SUBJECT} and {ALERT.MESSAGE}
-# Default subject: Problem {HOST.NAME}
 
 # Test for subject content
 if [ "$SUBJECT" == "$RESOLVED_STRING" ]
