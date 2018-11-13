@@ -6,7 +6,7 @@ source "/opt/backups.env"
 DATE=$(date +%F)
 BACKUP_DIR=/opt/backups/"${DATE}"
 LOG_FILE="${BACKUP_DIR}/backup.log"
-# Don't bail on error, we want to alert if there's an error
+# Don't bail on error
 set +e
 DIRECTORIES=(
     '/opt/ec2Snapshots'
@@ -39,23 +39,17 @@ check_backup_dir_exists () {
 }
 
 cleanup_old_backups () {
-    for item in $(find /opt/backups -name "*.tgz" -ctime +2)
-    do
-        # You need to run `aws configure` first
-        aws s3 cp s3://"${BUCKET}/${FOLDER}/${item}"
-        echo "Backing up ${item} to S3" >> "${LOG_FILE}"
-        echo "" >> "${LOG_FILE}"
-        rm -f $item
-        echo "Removed ${item}" >> "${LOG_FILE}"
-        echo "" >> "${LOG_FILE}"
-    done
-    for item in $(find /opt/backups -maxdepth 1 -type d -mtime +3)
-    do
-        echo "Zipping ${item}" >> "${LOG_FILE}"
-        echo "" >> "${LOG_FILE}"
-        tar -zcf ${item}.tgz $item
-        rm -rf "${item}"
-    done
+    find /opt/backups -name "*.tgz" -ctime -1 -exec /usr/local/bin/aws s3 cp {} s3://"${BUCKET}/${FOLDER}/" \;
+    echo "Backing up  to S3" >> "${LOG_FILE}"
+    echo "" >> "${LOG_FILE}"
+    find /opt/backups -name "*.tgz" -ctime -1 -exec rm {} \;
+    echo "Removed ${item}" >> "${LOG_FILE}"
+    echo "" >> "${LOG_FILE}"
+    find /opt/backups -maxdepth 1 -type d -mtime +3 -exec tar --selinux --xattrs -zcf {}.tgz {} \;
+    echo "Zipping ${item}" >> "${LOG_FILE}"
+    echo "" >> "${LOG_FILE}"
+    tar --selinux --xattrs -zcf .tgz 
+    
     main
 }
 
