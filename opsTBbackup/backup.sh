@@ -2,7 +2,7 @@
 # Opstoolbox Backup Script
 # Install in /opt/backups/
 # Cron = 15 3 * * * root /opt/backups/backup.sh & > /opt/backups/cron.log 2>&1
-source "/opt/backups.env"
+source "/opt/backups/.env"
 DATE=$(date +%F)
 BACKUP_DIR=/opt/backups/"${DATE}"
 LOG_FILE="${BACKUP_DIR}/backup.log"
@@ -29,12 +29,12 @@ check_backup_dir_exists () {
         if [ "$choice" == "y" ]
         then
             mv "${BACKUP_DIR}" "${BACKUP_DIR}.old"
-            cleanup_old_backups
+            main
         else
             exit 2
         fi
     else
-        cleanup_old_backups
+        main
     fi
 }
 
@@ -43,14 +43,14 @@ cleanup_old_backups () {
     echo "Backing up  to S3" >> "${LOG_FILE}"
     echo "" >> "${LOG_FILE}"
     find /opt/backups -name "*.tgz" -ctime -1 -exec rm {} \;
-    echo "Removed ${item}" >> "${LOG_FILE}"
-    echo "" >> "${LOG_FILE}"
-    find /opt/backups -maxdepth 1 -type d -mtime +3 -exec tar --selinux --xattrs -zcf {}.tgz {} \;
-    echo "Zipping ${item}" >> "${LOG_FILE}"
-    echo "" >> "${LOG_FILE}"
-    tar --selinux --xattrs -zcf .tgz 
-    
-    main
+    find /opt/backups -maxdepth 1 -type d -mtime +3 -exec tar --selinux --xattrs -zcf {}.tgz {} \;    
+    if [ -f "${BACKUP_DIR}/error" ]
+    then
+        /opt/backups/backup_alert.py "${BACKUP_DIR}/backup.log"
+        exit 1
+    else
+        exit 0
+    fi
 }
 
 main () {
@@ -88,18 +88,12 @@ main () {
     then
         echo "Successfully backed up Zabbix DB" >> "${LOG_FILE}"
         echo "" >> "${LOG_FILE}"
+        cleanup_old_backups
     else
         echo "Failed to backup Zabbix DB" >> "${LOG_FILE}"
         echo "" >> "${LOG_FILE}"
         touch "${BACKUP_DIR}/error"
-    fi
-
-    if [ -f "${BACKUP_DIR}/error" ]
-    then
-        /opt/backups/backup_alert.py "${BACKUP_DIR}/backup.log"
-        exit 1
-    else
-        exit 0
+        cleanup_old_backups
     fi
 }
 check_backup_dir_exists
