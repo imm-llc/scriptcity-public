@@ -1,5 +1,5 @@
 # db_backup.py
-Written in Python3 and uses Parmiko and SCP. Creates `backup/YYYY-MM-DD/`, establishes an SSH connection to a remote server, dumps contents of a DB to specified location, copies that backup to the local filesystem, then deletes the database dump on the remote server.
+Written in Python3 and uses Parmiko and SCP. Creates `backups/YYYY-MM-DD/`, establishes an SSH connection to a remote server, dumps contents of a DB to specified location, copies that backup to the local filesystem, then deletes the database dump on the remote server.
 
 Note: The local filesystem is never cleaned up.
 
