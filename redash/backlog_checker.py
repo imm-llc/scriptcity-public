@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import requests, json, sys
+import requests, json, sys, os
 
 # Redash
 REDASH_HOST = "http://redash.example.com"
@@ -12,6 +12,8 @@ USERNAME = "RedashAlerts"
 CHANNEL = "#redash-alerts"
 EMOJI = "https://avatars3.githubusercontent.com/u/10746780?s=200&v=4" # Redash logo
 HEADERS = {'content-type': 'application/json'}
+# Previous backlog info
+LOGFILE = "/opt/redash/backlog.count"
 
 def refresh_redash():
     s  = requests.Session()
@@ -21,7 +23,7 @@ def refresh_redash():
         return slack_bad_status(response.status_code, "0")
     else:
         return get_queryinfo(s)
-    
+
 def get_queryinfo(s):
     response = s.get('{}/api/queries/{}/results.json'.format(REDASH_HOST, QUERY_ID))
     status_code = response.status_code
@@ -30,12 +32,16 @@ def get_queryinfo(s):
     else:
         pending_jobs = response.json()['query_result']['data']['rows'][0]['count']
         if pending_jobs > 100:
-            return slack_good_status(pending_jobs)
+            with open(LOGFILE, "w") as LF:
+                LF.write(pending_jobs)
+                LF.close()
+            return slack_good_status(pending_jobs, "danger")
         else:
-            print(pending_jobs)
-            sys.exit(0)
-
-
+            if LOGFILE:
+                os.remove(LOGFILE)
+                return slack_good_status(pending_jobs, "good")
+            else:
+                sys.exit(0)
 
 def slack_bad_status(http_status, pending_jobs):
     if http_status == 403:
@@ -56,16 +62,15 @@ def slack_bad_status(http_status, pending_jobs):
     }]
     requests.post(WEBHOOK_URL, data=json.dumps(JSON_RESPONSE), headers=HEADERS)
 
-    
-def slack_good_status(pending_jobs):
-    
+
+def slack_good_status(pending_jobs, status):
     JSON_RESPONSE = {}
     JSON_RESPONSE['username'] = USERNAME
     JSON_RESPONSE['channel'] = CHANNEL
     JSON_RESPONSE['icon_url'] = EMOJI
     JSON_RESPONSE['attachments'] = [{
         "text": "Power Track Backlog: "+str(pending_jobs),
-        "color": "danger",
+        "color": status,
         "title": "Delayed Jobs Backlog"
     }]
     requests.post(WEBHOOK_URL, data=json.dumps(JSON_RESPONSE), headers=HEADERS)
