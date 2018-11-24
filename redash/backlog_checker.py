@@ -45,7 +45,7 @@ def get_queryinfo(s):
                     LF.close()
                 return slack_good_status(pending_jobs, "danger")
             else:
-                if LOGFILE:
+                if os.path.isfile(LOGFILE):
                     os.remove(LOGFILE)
                     return slack_good_status(pending_jobs, "good")
                     
