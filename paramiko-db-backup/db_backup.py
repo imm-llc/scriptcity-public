@@ -24,8 +24,7 @@ DB_PASS = ''
 DB_NAME = ''
 DB_HOST = '' # remote or local host
 DB_DUMP_LOCATION = ''
-LOCAL_LOCATION = os.path.join(os.getcwd(), 'backups/', str(datetime.date.today()))
-
+LOCAL_LOCATION = os.path.join('/db_backups/backups/', str(datetime.date.today())
 BACKUP_COMMAND = "mysqldump -u %s -p%s -h %s %s > %s" %(DB_USER, DB_PASS, DB_HOST, DB_NAME, DB_DUMP_LOCATION)
 REMOVE_EXISTING_BACKUP_COMMAND = "rm /tmp/latest.sql"
 def remove_remote_backup():
