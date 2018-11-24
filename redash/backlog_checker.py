@@ -17,8 +17,10 @@ LOGFILE = "/opt/redash/backlog.count"
 
 parser = argparse.ArgumentParser(description='Check DelayedJobs Backlog')
 parser.add_argument('-n', help="Get count now", action='store_true')
+parser.add_argument('-l', help="Get count now, locally. Don't post to Slack", action='store_true')
 args = parser.parse_args()
 NOW = args.n
+LOCAL = args.l
 
 def refresh_redash():
     s  = requests.Session()
@@ -38,6 +40,8 @@ def get_queryinfo(s):
         pending_jobs = response.json()['query_result']['data']['rows'][0]['count']
         if NOW:
             return slack_good_status(pending_jobs, "#439FE0")
+        elif LOCAL:
+            print("Pending Jobs: %i" %(pending_jobs))
         else:
             if pending_jobs > 100:
                 with open(LOGFILE, "w") as LF:
