@@ -41,7 +41,7 @@ def get_queryinfo(s):
         else:
             if pending_jobs > 100:
                 with open(LOGFILE, "w") as LF:
-                    LF.write(pending_jobs)
+                    LF.write(str(pending_jobs))
                     LF.close()
                 return slack_good_status(pending_jobs, "danger")
             else:
