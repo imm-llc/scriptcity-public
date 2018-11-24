@@ -29,32 +29,29 @@ def refresh_redash():
     if response.status_code != 200:
         return slack_bad_status(response.status_code, "0")
     else:
-        return get_queryinfo(s)
-
-def get_queryinfo(s):
-    response = s.get('{}/api/queries/{}/results.json'.format(REDASH_HOST, QUERY_ID))
-    status_code = response.status_code
-    if status_code != 200:
-        return slack_bad_status(status_code, "0")
-    else:
-        pending_jobs = response.json()['query_result']['data']['rows'][0]['count']
-        if NOW:
-            return slack_good_status(pending_jobs, "#439FE0")
-        elif LOCAL:
-            print("Pending Jobs: %i" %(pending_jobs))
+        response = s.get('{}/api/queries/{}/results.json'.format(REDASH_HOST, QUERY_ID))
+        status_code = response.status_code
+        if status_code != 200:
+            return slack_bad_status(status_code, "0")
         else:
-            if pending_jobs > 100:
-                with open(LOGFILE, "w") as LF:
-                    LF.write(str(pending_jobs))
-                    LF.close()
-                return slack_good_status(pending_jobs, "danger")
+            pending_jobs = response.json()['query_result']['data']['rows'][0]['count']
+            if NOW:
+                return slack_good_status(pending_jobs, "#439FE0")
+            elif LOCAL:
+                print("Pending Jobs: %i" %(pending_jobs))
             else:
-                if os.path.isfile(LOGFILE):
-                    os.remove(LOGFILE)
-                    return slack_good_status(pending_jobs, "good")
-                    
+                if pending_jobs > 100:
+                    with open(LOGFILE, "w") as LF:
+                        LF.write(str(pending_jobs))
+                        LF.close()
+                    return slack_good_status(pending_jobs, "danger")
                 else:
-                    sys.exit(0)
+                    if os.path.isfile(LOGFILE):
+                        os.remove(LOGFILE)
+                        return slack_good_status(pending_jobs, "good")
+                        
+                    else:
+                        sys.exit(0)
 
 
 def slack_bad_status(http_status, pending_jobs):
