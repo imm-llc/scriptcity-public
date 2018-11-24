@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import requests, json, sys, os
+import requests, json, sys, os, argparse
 
 # Redash
 REDASH_HOST = "http://redash.example.com"
@@ -14,6 +14,11 @@ EMOJI = "https://avatars3.githubusercontent.com/u/10746780?s=200&v=4" # Redash l
 HEADERS = {'content-type': 'application/json'}
 # Previous backlog info
 LOGFILE = "/opt/redash/backlog.count"
+
+parser = argparse.ArgumentParser(description='Check DelayedJobs Backlog')
+parser.add_argument('-n', help="Get count now", action='store_true')
+args = parser.parse_args()
+NOW = args.n
 
 def refresh_redash():
     s  = requests.Session()
@@ -31,17 +36,22 @@ def get_queryinfo(s):
         return slack_bad_status(status_code, "0")
     else:
         pending_jobs = response.json()['query_result']['data']['rows'][0]['count']
-        if pending_jobs > 100:
-            with open(LOGFILE, "w") as LF:
-                LF.write(pending_jobs)
-                LF.close()
-            return slack_good_status(pending_jobs, "danger")
+        if NOW:
+            return slack_good_status(pending_jobs, "#439FE0")
         else:
-            if LOGFILE:
-                os.remove(LOGFILE)
-                return slack_good_status(pending_jobs, "good")
+            if pending_jobs > 100:
+                with open(LOGFILE, "w") as LF:
+                    LF.write(pending_jobs)
+                    LF.close()
+                return slack_good_status(pending_jobs, "danger")
             else:
-                sys.exit(0)
+                if LOGFILE:
+                    os.remove(LOGFILE)
+                    return slack_good_status(pending_jobs, "good")
+                    
+                else:
+                    sys.exit(0)
+
 
 def slack_bad_status(http_status, pending_jobs):
     if http_status == 403:
