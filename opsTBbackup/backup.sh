@@ -18,7 +18,7 @@ DIRECTORIES=(
     '/etc/zabbix'
     '/etc/firewalld'
     '/etc/selinux'
-    '/etc/ansible'   
+    '/etc/ansible'
 )
 check_backup_dir_exists () {
     if [ -d ${BACKUP_DIR} ]
@@ -42,8 +42,9 @@ cleanup_old_backups () {
     find /opt/backups -name "*.tgz" -ctime -1 -exec /usr/local/bin/aws s3 cp {} s3://"${BUCKET}/${FOLDER}/" \;
     echo "Backing up  to S3" >> "${LOG_FILE}"
     echo "" >> "${LOG_FILE}"
-    find /opt/backups -name "*.tgz" -ctime -1 -exec rm {} \;
-    find /opt/backups -maxdepth 1 -type d -mtime +3 -exec tar --selinux --xattrs -zcf {}.tgz {} \;    
+    find /opt/backups -name "*.tgz" -ctime +1 -exec rm {} \;
+    find /opt/backups -maxdepth 1 -type d -ctime +3 -exec rm -rf {} \;
+    find /opt/backups -maxdepth 1 -type d -mtime +3 -exec tar --selinux --xattrs -zcf {}.tgz {} \;
     if [ -f "${BACKUP_DIR}/error" ]
     then
         /opt/backups/backup_alert.py "${BACKUP_DIR}/backup.log"
@@ -83,17 +84,6 @@ main () {
         echo "Failed to create Zabbix DB directory" >> "${LOG_FILE}"
         echo "" >> "${LOG_FILE}"
         touch "${BACKUP_DIR}/error"
-    fi
-    if mysqldump -u zabbix -p"${zabbix_db_pw}" zabbix > "${BACKUP_DIR}/zabbix/db/db.sql"
-    then
-        echo "Successfully backed up Zabbix DB" >> "${LOG_FILE}"
-        echo "" >> "${LOG_FILE}"
-        cleanup_old_backups
-    else
-        echo "Failed to backup Zabbix DB" >> "${LOG_FILE}"
-        echo "" >> "${LOG_FILE}"
-        touch "${BACKUP_DIR}/error"
-        cleanup_old_backups
     fi
 }
 check_backup_dir_exists
