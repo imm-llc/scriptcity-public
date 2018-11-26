@@ -11,6 +11,11 @@ try:
 except:
     print("Unable to import scp. Please make sure it's installed")
     sys.exit(1)
+try:
+    import requests
+except:
+    print("Unable to import requests. Try pip install requests")
+    sys.exit(1)
 
 # SSH info
 # Key needs to be RSA because of Paramiko limitations
@@ -84,5 +89,19 @@ def cleanup():
     SSH_CLIENT.connect(HOST, port=SSH_PORT, username=SSH_USER, key_filename=SSH_KEY)
     SSH_CLIENT.exec_command(REMOVE_EXISTING_BACKUP_COMMAND)
     SSH_CLIENT.close()
+    return slack_notification()
+def slack_notification():
+    INCOMING_WEBHOOK = ""
+    HEADER = {'content-type': 'application/json'}
+    USER = "Paramiko Backup"
+    CHANNEL = "backups"
+    EMOJI = "https://www.python.org/static/opengraph-icon-200x200.png"
+    MESSAGE = "Database backup for %s complete" %("Server Name")
+    JSON_ = {}
+    JSON_['channel'] = CHANNEL
+    JSON_['icon_url'] = EMOJI
+    JSON_['username'] = USER
+    JSON_['text'] = MESSAGE
+    requests.post(INCOMING_WEBHOOK, data=json.dumps(JSON_), headers=HEADER)
 dump_database()
 
