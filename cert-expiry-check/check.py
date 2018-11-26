@@ -16,7 +16,7 @@ ALERT_TIME = 10
 INCOMING_WEBHOOK = ""
 USERNAME = "TLS Certificate Checker"
 CHANNEL = "#cert-alerts"
-EMOJI = ":terminator:"
+EMOJI = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRihczVMjBKJqN7uFHZRTcwcsq1M-3ulBsfgb-5ZqMaLavLsEnYsA"
 
 
 # If running on a Mac, follow the steps in this answer: https://stackoverflow.com/questions/41691327/ssl-sslerror-ssl-certificate-verify-failed-certificate-verify-failed-ssl-c/41692664
@@ -47,7 +47,7 @@ def slack_alert(host, time_left):
     json_message = {
         'channel': CHANNEL,
         'username': USERNAME,
-        'icon_emoji': EMOJI,
+        'icon_url': EMOJI,
         'attachments': [
             {
                 'title': "ALERT: %s" %host,
