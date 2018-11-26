@@ -85,5 +85,10 @@ main () {
         echo "" >> "${LOG_FILE}"
         touch "${BACKUP_DIR}/error"
     fi
+    # MySQL user needs SELECT and LOCK TABLES
+    ssh -i "${KEY}" -l "${SSH_USER}" elastic "mysqldump -u ${zabbix_backup_user} -p${zabbix_db_pw} zabbix > /tmp/zabbix.sql"
+    scp -i "${KEY}" ansible@elastic:/tmp/zabbix.sql ${BACKUP_DIR}/zabbix/db/
+    ssh -i "${KEY}" -l "${SSH_USER}" elastic "rm /tmp/zabbix.sql"
+    cleanup_old_backups
 }
 check_backup_dir_exists
