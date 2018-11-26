@@ -1,5 +1,6 @@
 #!/bin/bash
-username=$(cat /opt/restartAP/user)
+username=""
+PASS_FILE="/path/to/file"
 APs=(
 	'172.28.253.65'
 	'172.28.253.66'
@@ -12,7 +13,7 @@ APs=(
 	)
 for ap in ${APs[@]};
 do
-sshpass -f /opt/restartAP/pass ssh $username@$ap reboot
+sshpass -f "${PASS_FILE}" ssh $username@$ap reboot
 done
 url='https://hooks.slack.com/AAAAA/AAAAAAAAAAAAAAAAA'
 emoji=":terminator:"
