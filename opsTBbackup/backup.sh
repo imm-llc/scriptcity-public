@@ -43,8 +43,8 @@ cleanup_old_backups () {
     echo "Backing up  to S3" >> "${LOG_FILE}"
     echo "" >> "${LOG_FILE}"
     find /opt/backups -name "*.tgz" -ctime +1 -exec rm {} \;
-    find /opt/backups -maxdepth 1 -type d -ctime +3 -exec rm -rf {} \;
     find /opt/backups -maxdepth 1 -type d -mtime +3 -exec tar --selinux --xattrs -zcf {}.tgz {} \;
+    find /opt/backups -maxdepth 1 -type d -ctime +3 -exec rm -rf {} \;
     if [ -f "${BACKUP_DIR}/error" ]
     then
         /opt/backups/backup_alert.py "${BACKUP_DIR}/backup.log"
