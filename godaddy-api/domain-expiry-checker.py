@@ -79,7 +79,7 @@ def slack_notification(DOMAIN, FORMAT_DATE):
     EMOJI = ""
     CHANNEL = ""
     JSON_DATA = {}
-    JSON_DATA['channe'] = CHANNEL
+    JSON_DATA['channel'] = CHANNEL
     JSON_DATA['icon_url'] = EMOJI
     JSON_DATA['username'] = USERNAME
     JSON_DATA['attachments'] = [{
