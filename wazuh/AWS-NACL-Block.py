@@ -47,14 +47,9 @@ parser = argparse.ArgumentParser(description="A Wazuh tool to block traffic at t
 parser.add_argument("Action")
 parser.add_argument("User")
 parser.add_argument("IP")
-parser.add_argument("alert-id")
-parser.add_argument("rule-id")
-parser.add_argument("trigger")
-parser.add_argument("location")
-parser.add_argument("wazuh")
-parser.add_argument("wazuh1")
+
 try:
-        args = parser.parse_args()
+        args, unknown = parser.parse_known_args()
 except Exception as err:
         with open(LOG_FILE, "a") as LF:
                 LF.write(str(err))
@@ -110,8 +105,7 @@ if ACTION == "add":
         EXTRA_LOG = {'wazuhAction': "addRule", 'ip': IP, 'rulenumber': str(NEW_RULE_NUMBER)}
         logging.error("|| Error adding rule: Rule number would be negative", extra=EXTRA_LOG)
         exit(3)
-    #EXTRA_LOG = {'action': "addRule", 'ip': IP, 'rulenumber': NEW_RULE_NUMBER}
-    #AWS_NACL_LOGGER.info(extras=EXTRA_LOG)
+
     try:
         NEW_ACL_ENTRY = network_acl.create_entry(
             CidrBlock=IP,
