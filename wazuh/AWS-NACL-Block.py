@@ -42,14 +42,23 @@ You'll end up with two separate policies; one on all resources, the other on a s
 LOG_FILE = "/var/ossec/logs/aws-nacl.log"
 LOG_FORMAT = '%(asctime)-15s %(wazuhAction)-4s %(ip)-4s %(rulenumber)-2s %(message)s'
 logging.basicConfig(filename=LOG_FILE, format=LOG_FORMAT)
-
 # Set up argparse
 parser = argparse.ArgumentParser(description="A Wazuh tool to block traffic at the NACL level")
 parser.add_argument("Action")
 parser.add_argument("User")
 parser.add_argument("IP")
-args = parser.parse_args()
-
+parser.add_argument("alert-id")
+parser.add_argument("rule-id")
+parser.add_argument("trigger")
+parser.add_argument("location")
+parser.add_argument("wazuh")
+parser.add_argument("wazuh1")
+try:
+        args = parser.parse_args()
+except Exception as err:
+        with open(LOG_FILE, "a") as LF:
+                LF.write(str(err))
+                LF.close()
 # Make variables pretty
 ACTION = args.Action
 USER = args.User
