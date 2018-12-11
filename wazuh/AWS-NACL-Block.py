@@ -49,11 +49,11 @@ parser.add_argument("User")
 parser.add_argument("IP")
 
 try:
-        args, unknown = parser.parse_known_args()
+    args, unknown = parser.parse_known_args()
 except Exception as err:
-        with open(LOG_FILE, "a") as LF:
-                LF.write(str(err))
-                LF.close()
+    with open(LOG_FILE, "a") as LF:
+        LF.write(str(err))
+        LF.close()
 # Make variables pretty
 ACTION = args.Action
 USER = args.User
@@ -127,6 +127,7 @@ if ACTION == "add":
 # Action must be drop
 
 else:
+
     for ENTRY in ENTRIES:
         if ENTRY["CidrBlock"] == IP:
             RULE_NUMBER = ENTRY["RuleNumber"]
