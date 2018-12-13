@@ -74,6 +74,7 @@ parser.add_argument("IP")
 parser.add_argument("-e", nargs="+", help="Environment to use (e.g. dev or prod)", action="store")
 parser.add_argument("-n", nargs="+", help="NACL ID", action="store")
 parser.add_argument("-r", nargs="+", help="NACL Region", action="store")
+parser.add_argument("-s", nargs="+", help="Safeguard. Prevent this rule # from being deleted", action="store")
 
 # Try to parse the arguments, write error to file if it fails. 
 try:
@@ -92,7 +93,7 @@ IP = IP + '/32'
 
 # Use zip() to match profile (ENV), NACL (NACL_ID), and region (REGION). This is 1 to 1
 # Loop through each extra_args
-for ENV, NACL_ID, REGION in zip(args.e, args.n, args.r):
+for ENV, NACL_ID, REGION, SAFEGUARD in zip(args.e, args.n, args.r, args.s):
     AWS_PROFILE = ENV
     AWS_REGION = REGION
     
@@ -139,11 +140,11 @@ for ENV, NACL_ID, REGION in zip(args.e, args.n, args.r):
                 RuleNumber=NEW_RULE_NUMBER
             )
             EXTRA_LOG = {'wazuhAction': "addRule", 'ip': IP, 'rulenumber': str(NEW_RULE_NUMBER)}
-            logging.warn("|| Success || NACL Block Added", extra=EXTRA_LOG)
+            logging.warn("|| Success || NACL Block Added for {}".format(AWS_PROFILE), extra=EXTRA_LOG)
             
         except Exception as err:
             EXTRA_LOG = {'wazuhAction': "addRule", 'ip': IP, 'rulenumber': str(NEW_RULE_NUMBER)}
-            logging.error("|| Error adding rule: {}".format(err), extra=EXTRA_LOG)
+            logging.error("|| Error adding rule: {} || Environment: {}".format(err, AWS_PROFILE), extra=EXTRA_LOG)
             # We shouldn't stop just because one ACL entry didn't work
             continue
             
@@ -156,16 +157,25 @@ for ENV, NACL_ID, REGION in zip(args.e, args.n, args.r):
         for ENTRY in ENTRIES:
             if ENTRY["CidrBlock"] == IP:
                 RULE_NUMBER = ENTRY["RuleNumber"]
-        
-        try:
-            REMOVE_ACL_ENTRY = network_acl.delete_entry(
-                DryRun=False,
-                Egress=False,
-                RuleNumber=RULE_NUMBER
-            )
-            EXTRA_LOG = {'wazuhAction': "removeRule", 'ip': IP, 'rulenumber': str(RULE_NUMBER)}
-            logging.warn("|| Success || NACL Block Removed", extra=EXTRA_LOG)
-        except Exception as err:
-            EXTRA_LOG = {'wazuhAction': "removeRule", 'ip': IP, 'rulenumber': str(RULE_NUMBER)}
-            logging.error("|| Error removing rule: {}".format(err), extra=EXTRA_LOG)
-            continue
+                if str(RULE_NUMBER) == str(SAFEGUARD):
+                    EXTRA_LOG = {'wazuhAction': "removeRule", 'ip': IP, 'rulenumber': str(RULE_NUMBER)}
+                    logging.error("|| Error removing rule: {} || Environment: {} || Safeguard prevented removing the rule".format(err, AWS_PROFILE), extra=EXTRA_LOG)
+                    pass
+                else:
+                    try:
+                        REMOVE_ACL_ENTRY = network_acl.delete_entry(
+                            DryRun=False,
+                            Egress=False,
+                            RuleNumber=RULE_NUMBER
+                        )
+                        EXTRA_LOG = {'wazuhAction': "removeRule", 'ip': IP, 'rulenumber': str(RULE_NUMBER)}
+                        logging.warn("|| Success || NACL Block Removed for {}".format(AWS_PROFILE), extra=EXTRA_LOG)
+
+                    except Exception as err:
+                        EXTRA_LOG = {'wazuhAction': "removeRule", 'ip': IP, 'rulenumber': str(RULE_NUMBER)}
+                        logging.error("|| Error removing rule: {} || Environment: {}".format(err, AWS_PROFILE), extra=EXTRA_LOG)
+                        continue
+            else:
+                EXTRA_LOG = {'wazuhAction': "removeRule", 'ip': IP, 'rulenumber': "N/A"}
+                logging.error("|| Error removing rule (Unable to find matching rule): {} || Environment: {}".format(err, AWS_PROFILE), extra=EXTRA_LOG)
+                continue
