@@ -154,29 +154,26 @@ for ENV, NACL_ID, REGION, SAFEGUARD in zip(args.e, args.n, args.r, args.s):
     # Action must be drop
 
     else:
-        print("hit else")
         for ENTRY in ENTRIES:
             if ENTRY["CidrBlock"] == IP:
                 RULE_NUMBER = ENTRY["RuleNumber"]
                 if str(RULE_NUMBER) == str(SAFEGUARD):
                     EXTRA_LOG = {'wazuhAction': "removeRule", 'ip': IP, 'rulenumber': str(RULE_NUMBER)}
                     logging.error("|| Error removing rule: {} || Environment: {} || Safeguard prevented removing the rule".format(err, AWS_PROFILE), extra=EXTRA_LOG)
-                    pass
+                    # Add blank rule so we don't break anything
+                    RULE_NUMBER = ""
                 else:
-                    try:
-                        REMOVE_ACL_ENTRY = network_acl.delete_entry(
-                            DryRun=False,
-                            Egress=False,
-                            RuleNumber=RULE_NUMBER
-                        )
-                        EXTRA_LOG = {'wazuhAction': "removeRule", 'ip': IP, 'rulenumber': str(RULE_NUMBER)}
-                        logging.warn("|| Success || NACL Block Removed for {}".format(AWS_PROFILE), extra=EXTRA_LOG)
+                    RULE_NUMBER = ENTRY["RuleNumber"]
+        try:
+            REMOVE_ACL_ENTRY = network_acl.delete_entry(
+                DryRun=False,
+                Egress=False,
+                RuleNumber=RULE_NUMBER
+            )
+            EXTRA_LOG = {'wazuhAction': "removeRule", 'ip': IP, 'rulenumber': str(RULE_NUMBER)}
+            logging.warn("|| Success || NACL Block Removed for {}".format(AWS_PROFILE), extra=EXTRA_LOG)
 
-                    except Exception as err:
-                        EXTRA_LOG = {'wazuhAction': "removeRule", 'ip': IP, 'rulenumber': str(RULE_NUMBER)}
-                        logging.error("|| Error removing rule: {} || Environment: {}".format(err, AWS_PROFILE), extra=EXTRA_LOG)
-                        continue
-            else:
-                EXTRA_LOG = {'wazuhAction': "removeRule", 'ip': IP, 'rulenumber': "N/A"}
-                logging.error("|| Error removing rule (Unable to find matching rule): {} || Environment: {}".format(str(IP), AWS_PROFILE), extra=EXTRA_LOG)
-                continue
+        except Exception as err:
+            EXTRA_LOG = {'wazuhAction': "removeRule", 'ip': IP, 'rulenumber': str(RULE_NUMBER)}
+            logging.error("|| Error removing rule: {} || Environment: {}".format(err, AWS_PROFILE), extra=EXTRA_LOG)
+            pass
