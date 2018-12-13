@@ -9,7 +9,7 @@ COMMAND:
     <name>AWS-NACL</name>
     <executable>AWS-NACL.py</executable>
     <expect>srcip</expect>
-    <extra_args>-e company1 company2 -n acl-123 acl-456 -r us-east-2 us-west-1</extra_args>
+    <extra_args>-e company1 company2 -n acl-123 acl-456 -r us-east-2 us-west-1 -s 999 86</extra_args>
     <timeout_allowed>yes</timeout_allowed>
   </command>
 ACTIVE RESPONSE: 
@@ -52,7 +52,7 @@ Example:
 
 /var/ossec/etc/ossec.conf
 
-<extra_args>-e company1 company2 -n acl-123 acl-456 -r us-east-2 us-west-1</extra_args>
+<extra_args>-e company1 company2 -n acl-123 acl-456 -r us-east-2 us-west-1 -s 999 86</extra_args>
 
 Credentials:
 Store in ~/.aws/credentials
@@ -93,6 +93,7 @@ IP = IP + '/32'
 
 # Use zip() to match profile (ENV), NACL (NACL_ID), and region (REGION). This is 1 to 1
 # Loop through each extra_args
+
 for ENV, NACL_ID, REGION, SAFEGUARD in zip(args.e, args.n, args.r, args.s):
     AWS_PROFILE = ENV
     AWS_REGION = REGION
@@ -153,7 +154,7 @@ for ENV, NACL_ID, REGION, SAFEGUARD in zip(args.e, args.n, args.r, args.s):
     # Action must be drop
 
     else:
-
+        print("hit else")
         for ENTRY in ENTRIES:
             if ENTRY["CidrBlock"] == IP:
                 RULE_NUMBER = ENTRY["RuleNumber"]
@@ -177,5 +178,5 @@ for ENV, NACL_ID, REGION, SAFEGUARD in zip(args.e, args.n, args.r, args.s):
                         continue
             else:
                 EXTRA_LOG = {'wazuhAction': "removeRule", 'ip': IP, 'rulenumber': "N/A"}
-                logging.error("|| Error removing rule (Unable to find matching rule): {} || Environment: {}".format(err, AWS_PROFILE), extra=EXTRA_LOG)
+                logging.error("|| Error removing rule (Unable to find matching rule): {} || Environment: {}".format(str(IP), AWS_PROFILE), extra=EXTRA_LOG)
                 continue
