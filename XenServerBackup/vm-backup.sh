@@ -129,6 +129,7 @@ do
     fi
     create_and_delete_template "${SNAPSHOT_UUID}" "${VM_FRIENDLY_NAME}"
 done
+umount "${BACKUP_PATH}"
 exit 0
 }
 
