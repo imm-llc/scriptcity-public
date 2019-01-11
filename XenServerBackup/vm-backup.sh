@@ -110,7 +110,7 @@ create_snapshot () {
 for UUID in ${VM_UUID_LIST}
 do
     VM_FRIENDLY_NAME=$(echo "${UUID}" | cut -f 1 -d ":")
-    VM_FRIENDLY_NAME="${VM_FRIENDLY_NAME}-${DATE}.ova"
+    VM_FRIENDLY_NAME="${VM_FRIENDLY_NAME}-${DATE}.xva"
     VM_UUID=$(echo "${UUID}" | cut -f 2 -d ":")
     VM_SNAPSHOT_NAME="${VM_FRIENDLY_NAME}-${DATE}"
     echo "Friendly name: ${VM_FRIENDLY_NAME} || VM UUID: ${VM_UUID}"
