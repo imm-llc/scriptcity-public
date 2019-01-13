@@ -83,14 +83,14 @@ for VM_EXPORT in os.listdir(BACKUP_PATH):
         if slackEnabled:
             JSON_MESSAGE['text'] = "Backed up {} to S3".format(str(VM_PATH))
             requests.post(slackWebHook, data=json.dumps(JSON_MESSAGE), headers=HEADERS)
+        try:
+            os.remove(VM_PATH)
+        if graylogEnabled or localLog:
+            logging.info("Removed {}".format(str(VM_PATH)))
+        except Exception as err:
+            logging.error("Failed to remove {} || {}".format(str(VM_EXPORT), str(err)))
     except Exception as err:
         if graylogEnabled or localLog:
             logging.error("Failed to back up {} to S3 || {}".format(str(VM_PATH), str(err)))
         if slackEnabled:
             JSON_MESSAGE['text'] = "Failed to back up {} to S3 || {}".format(str(VM_PATH), str(err))
-    try:
-        os.remove(VM_PATH)
-        if graylogEnabled or localLog:
-            logging.info("Removed {}".format(str(VM_PATH)))
-    except Exception as err:
-        logging.error("Failed to remove {} || {}".format(str(VM_EXPORT), str(err)))
