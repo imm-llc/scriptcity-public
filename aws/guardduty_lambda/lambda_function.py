@@ -10,15 +10,21 @@ def lambda_handler(data, context):
     # We're working with an instance
     if message['ResourceCategory'] == 'Instance':
         message['SuspectResource'] = data['detail']['resource']['instanceDetails']['instanceId']
-        message['RemoteIP'] = data['detail']['service']['action']['networkConnectionAction']['remoteIpDetails']['ipAddressV4']
-        network_direction = data['detail']['service']['action']['networkConnectionAction']['connectionDirection']
-        message['SuspectAction'] = "{} - {}".formati(message['SuspectAction'], network_direction)
+        if data['detail']['service']['action']['actionType'] == "PORT_PROBE":
+            message['RemoteIP'] = data['detail']['service']['action']['portProbeDetails']['remoteIpDetails']['ipAddressV4']
+            network_direction = ""
+        else:
+            message['RemoteIP'] = data['detail']['service']['action']['networkConnectionAction']['remoteIpDetails']['ipAddressV4']
+            network_direction = data['detail']['service']['action']['networkConnectionAction']['connectionDirection']
+        message['SuspectAction'] = "{} - {}".format(message['SuspectAction'], network_direction)
     elif message['ResourceCategory'] == "AccessKey":
         message['SuspectResource'] = data['detail']['resource']['accessKeyDetails']['userName']
         message['RemoteIP'] = data['detail']['service']['action']['awsApiCallAction']['remoteIpDetails']['ipAddressV4']
+        message['SuspectAction'] = "AccessKey Usage"
     else:
         message['SuspectResource'] = "Unknown"
         message['RemoteIP'] = "Unknown"
+        message['SuspectAction'] = "Unknown"
     
     slack_handler(message)
     
