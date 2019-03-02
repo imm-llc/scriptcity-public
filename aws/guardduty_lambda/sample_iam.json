@@ -1,0 +1,75 @@
+[
+    {
+      "schemaVersion": "2.0",
+      "accountId": "846340697564",
+      "region": "us-east-1",
+      "partition": "aws",
+      "id": "d0b49f7f2d23c1e417a59ff6be7592c7",
+      "arn": "arn:aws:guardduty:us-east-1:846340697564:detector/0ab49f7f040c083885a48764e875c8d7/finding/d0b49f7f2d23c1e417a59ff6be7592c7",
+      "type": "Recon:IAMUser/ResourcePermissions",
+      "resource": {
+        "resourceType": "AccessKey",
+        "accessKeyDetails": {
+          "accessKeyId": "GeneratedFindingAccessKeyId",
+          "principalId": "GeneratedFindingPrincipalId",
+          "userType": "IAMUser",
+          "userName": "GeneratedFindingUserName"
+        }
+      },
+      "service": {
+        "serviceName": "guardduty",
+        "detectorId": "0ab49f7f040c083885a48764e875c8d7",
+        "action": {
+          "actionType": "AWS_API_CALL",
+          "awsApiCallAction": {
+            "api": "GeneratedFindingAPIName",
+            "serviceName": "GeneratedFindingAPIServiceName",
+            "callerType": "Remote IP",
+            "remoteIpDetails": {
+              "ipAddressV4": "198.51.100.0",
+              "organization": {
+                "asn": "-1",
+                "asnOrg": "GeneratedFindingASNOrg",
+                "isp": "GeneratedFindingISP",
+                "org": "GeneratedFindingORG"
+              },
+              "country": {
+                "countryName": "GeneratedFindingCountryName"
+              },
+              "city": {
+                "cityName": "GeneratedFindingCityName"
+              },
+              "geoLocation": {
+                "lat": 0,
+                "lon": 0
+              }
+            },
+            "affectedResources": {}
+          }
+        },
+        "resourceRole": "TARGET",
+        "additionalInfo": {
+          "recentApiCalls": [
+            {
+              "count": 2,
+              "api": "GeneratedFindingAPIName1"
+            },
+            {
+              "count": 2,
+              "api": "GeneratedFindingAPIName2"
+            }
+          ],
+          "sample": true
+        },
+        "eventFirstSeen": "2019-03-02T15:20:50.503Z",
+        "eventLastSeen": "2019-03-02T15:20:50.503Z",
+        "archived": true,
+        "count": 1
+      },
+      "severity": 5,
+      "createdAt": "2019-03-02T15:20:50.503Z",
+      "updatedAt": "2019-03-02T15:20:50.503Z",
+      "title": "Unusual resource permission reconnaissance activity by GeneratedFindingUserName.",
+      "description": "APIs commonly used to discover the permissions associated with various resources in your accounts like S3 buckets, was invoked by IAM principal GeneratedFindingUserName. Such activity is not typically seen from this principal."
+    }
+  ]
