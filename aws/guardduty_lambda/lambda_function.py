@@ -25,6 +25,7 @@ def lambda_handler(data, context):
         message['SuspectResource'] = "Unknown"
         message['RemoteIP'] = "Unknown"
         message['SuspectAction'] = "Unknown"
+    message['Description'] = data['detail']['description']
     
     slack_handler(message)
     
@@ -73,7 +74,10 @@ def slack_handler(message):
                     "title": "Severity",
                     "value": message['Severity'],
                     "short": "true"
-                }
+                },
+                    "title": "Description",
+                    "value": message['Description'],
+                    "short": "false"
             ]
         }
     ]
