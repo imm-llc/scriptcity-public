@@ -75,9 +75,11 @@ def slack_handler(message):
                     "value": message['Severity'],
                     "short": "true"
                 },
+                {
                     "title": "Description",
                     "value": message['Description'],
                     "short": "false"
+                }
             ]
         }
     ]
