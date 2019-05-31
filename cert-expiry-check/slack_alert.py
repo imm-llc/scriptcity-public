@@ -10,8 +10,7 @@ def send_alert(hostname, days):
 
     config = configparser.ConfigParser()
 
-    # config.read('/etc/tls_monitor/config.cfg')
-    config.read('/home/mitch/repos/scriptcity-public/cert-expiry-check/config.cfg')
+    config.read('/etc/tls_monitor/config.cfg')
 
     CHANNEL = config['SLACK']['CHANNEL']
     USERNAME = config['SLACK']['USERNAME']

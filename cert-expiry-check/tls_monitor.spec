@@ -84,11 +84,7 @@ if [ "$1" = "2" ]; then
   echo "##############################"
   echo "Upgrading TLS Monitor...performing post installation tasks"
   echo "##############################"
-  echo "Copying old config to /opt/slack_alert_api/app/config.py"
-  cp /opt/slack_alert_api-$(date +%F)/app/config.py /opt/slack_alert_api/app/config.py
-  echo "##############################"
-  echo "Starting Slack Alert API"
-  systemctl start slack_alert_api
+  echo "Ready to use!"
 fi
 
 
@@ -98,6 +94,6 @@ rm -rf %{buildroot}/*
 
 %files
 %defattr(-,api,root)
-/opt/slack_alert_api
+/usr/local/bin/tls_monitor/
 %attr(0644,root,root) /etc/systemd/system/slack_alert_api.service
 %config %attr(0644,api,api) /etc/tls_monitor/config.cfg

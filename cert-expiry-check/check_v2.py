@@ -22,9 +22,7 @@ class TLSChecker:
 
         self.logger.setLevel(logging.INFO)
 
-        #file_handler = logging.FileHandler("/var/log/tls_monitor/app.log")
-
-        file_handler = logging.FileHandler("/home/mitch/repos/scriptcity-public/cert-expiry-check/app.log")
+        file_handler = logging.FileHandler("/var/log/tls_monitor/app.log")
 
         self.logger.addHandler(file_handler)
 
@@ -34,8 +32,7 @@ class TLSChecker:
 
         config = configparser.ConfigParser()
 
-        # config.read('/etc/tls_monitor/config.cfg')
-        config.read('/home/mitch/repos/scriptcity-public/cert-expiry-check/config.cfg')        
+        config.read('/etc/tls_monitor/config.cfg')
 
         ALERT_TIME = int(config['MONITOR']['ALERT_TIME'])
 
