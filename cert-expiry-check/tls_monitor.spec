@@ -97,4 +97,6 @@ rm -rf %{buildroot}/*
 %defattr(-,tls_monitor,root)
 /usr/local/bin/tls_monitor/
 %attr(0644,root,root) /etc/cron.d/tls_monitor_cron
+%attr(0755,tls_monitor,tls_monitor) /var/log/tls_monitor
+%attr(0644,tls_monitor,tls_monitor) /var/log/tls_monitor/app.log
 %config %attr(0644,tls_monitor,tls_monitor) /etc/tls_monitor/config.cfg
