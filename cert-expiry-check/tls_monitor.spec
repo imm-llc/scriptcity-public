@@ -1,5 +1,5 @@
 %define name tls_monitor
-%define version 1.0
+%define version 1.1
 %define unmangled_version 1.0
 %define unmangled_version 1.0
 %define release 1
@@ -43,6 +43,7 @@ install -m 0640 %{_builddir}/%{name}/check_v2.py %{buildroot}/usr/local/bin/tls_
 install -m 0640 %{_builddir}/%{name}/slack_alert.py %{buildroot}/usr/local/bin/tls_monitor/
 install -m 0640 %{_builddir}/%{name}/config.cfg %{buildroot}/etc/tls_monitor
 install -m 0640 %{_builddir}/%{name}/pipfile %{buildroot}/usr/local/bin/tls_monitor/pipfile
+install -m 0640 %{_builddir}/%{name}/tls_monitor_cron %{buildroot}/etc/cron.d/
 
 %pre
 
