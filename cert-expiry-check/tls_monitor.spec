@@ -38,12 +38,15 @@ rm -rf %{buildroot}/*
 mkdir -p %{buildroot}/usr/local/bin/tls_monitor
 mkdir -p %{buildroot}/etc/tls_monitor
 mkdir -p %{buildroot}/etc/cron.d
+mkdir -p %{buildroot}/var/log/tls_monitor
+
 
 install -m 0640 %{_builddir}/%{name}/check_v2.py %{buildroot}/usr/local/bin/tls_monitor/
 install -m 0640 %{_builddir}/%{name}/slack_alert.py %{buildroot}/usr/local/bin/tls_monitor/
 install -m 0640 %{_builddir}/%{name}/config.cfg %{buildroot}/etc/tls_monitor
 install -m 0640 %{_builddir}/%{name}/pipfile %{buildroot}/usr/local/bin/tls_monitor/pipfile
 install -m 0640 %{_builddir}/%{name}/tls_monitor_cron %{buildroot}/etc/cron.d/
+touch %{buildroot}/var/log/tls_monitor/app.log
 
 %pre
 
