@@ -93,6 +93,6 @@ rm -rf %{_builddir}/*
 rm -rf %{buildroot}/*
 
 %files
-%defattr(-,api,root)
+%defattr(-,tls_monitor,root)
 /usr/local/bin/tls_monitor/
-%config %attr(0644,api,api) /etc/tls_monitor/config.cfg
+%config %attr(0644,tls_monitor,tls_monitor) /etc/tls_monitor/config.cfg
