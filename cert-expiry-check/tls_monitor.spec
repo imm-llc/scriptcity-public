@@ -96,4 +96,5 @@ rm -rf %{buildroot}/*
 %files
 %defattr(-,tls_monitor,root)
 /usr/local/bin/tls_monitor/
+/etc/cron.d/tls_monitor_cron
 %config %attr(0644,tls_monitor,tls_monitor) /etc/tls_monitor/config.cfg
