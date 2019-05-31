@@ -95,5 +95,4 @@ rm -rf %{buildroot}/*
 %files
 %defattr(-,api,root)
 /usr/local/bin/tls_monitor/
-%attr(0644,root,root) /etc/systemd/system/slack_alert_api.service
 %config %attr(0644,api,api) /etc/tls_monitor/config.cfg
