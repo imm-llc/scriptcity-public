@@ -1,1 +1,1 @@
-10 8 * * * tls_monitor python36 /usr/local/bin/tls_monitor/check_v2.py
+10 8 * * * root python36 /usr/local/bin/tls_monitor/check_v2.py

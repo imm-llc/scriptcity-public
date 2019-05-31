@@ -1,7 +1,7 @@
 %define name tls_monitor
-%define version 1.2
-%define unmangled_version 1.0
-%define unmangled_version 1.0
+%define version 1.3
+%define unmangled_version 1.3
+%define unmangled_version 1.3
 %define release 1
 %define _tmppath /tmp/rpm
 
@@ -11,7 +11,7 @@ Name: %{name}
 Version: %{version}
 Release: %{release}
 Source0: %{name}.tar.gz
-Requires: python36 python36-setuptools
+Requires: python36 python36-setuptools epel-release
 License: None
 Group: Monitoring
 BuildRoot: %{_tmppath}/%{name}-%{version}-buildroot
@@ -53,13 +53,6 @@ touch %{buildroot}/var/log/tls_monitor/app.log
 if [ "$1" = "1" ]; then
     echo "##############################"
     echo "Installing TLS Monitor"
-    if [ ! $(id -u tls_monitor 2> /dev/null) ] 
-    then 
-    echo "##############################"
-    echo "Could not find tls_monitor user....creating"
-    adduser --system --no-create-home --shell /sbin/nologin tls_monitor
-    echo "##############################"
-    echo "User created"
     fi
 fi
 
@@ -78,6 +71,7 @@ if [ "$1" = "1" ]; then
         then
         echo "pip3 not installed.....installing"
         /usr/bin/easy_install-3.6 pip 1> /dev/null
+        /usr/local/bin/pip3 install -r /usr/local/bin/tls_monitor/pipfile
     fi
     echo "##############################"
     echo "Installing python dependencies"
@@ -97,9 +91,9 @@ rm -rf %{_builddir}/*
 rm -rf %{buildroot}/*
 
 %files
-%defattr(-,tls_monitor,root)
+%defattr(-,root,root)
 /usr/local/bin/tls_monitor/
 %attr(0644,root,root) /etc/cron.d/tls_monitor_cron
-%attr(0755,tls_monitor,tls_monitor) /var/log/tls_monitor
-%attr(0644,tls_monitor,tls_monitor) /var/log/tls_monitor/app.log
-%config %attr(0644,tls_monitor,tls_monitor) /etc/tls_monitor/config.cfg
+%attr(0755,root,root) /var/log/tls_monitor
+%attr(0644,root,root) /var/log/tls_monitor/app.log
+%config %attr(0644,root,root) /etc/tls_monitor/config.cfg
