@@ -42,7 +42,7 @@ mkdir -p %{buildroot}/etc/cron.d
 install -m 0640 %{_builddir}/%{name}/check_v2.py %{buildroot}/usr/local/bin/tls_monitor/
 install -m 0640 %{_builddir}/%{name}/slack_alert.py %{buildroot}/usr/local/bin/tls_monitor/
 install -m 0640 %{_builddir}/%{name}/config.cfg %{buildroot}/etc/tls_monitor
-install -m 0640 %{_builddir}/%{name}/pipfile %{buildroot}/usr/local/bin/bin/tls_monitor/pipfile
+install -m 0640 %{_builddir}/%{name}/pipfile %{buildroot}/usr/local/bin/tls_monitor/pipfile
 
 %pre
 
@@ -61,7 +61,7 @@ fi
 
 if [ "$1" = "2" ]; then
   echo "##############################"
-  echo "Backing up previous installation to /usr/local/bin/bin/tls_monitor-$(date +%F)"
+  echo "Backing up previous installation to /usr/local/bin/tls_monitor-$(date +%F)"
   #mv /usr/local/bin/bin/tls_monitor /usr/local/bin/bin/tls_monitor-$(date +%F)
 fi
 
@@ -77,7 +77,7 @@ if [ "$1" = "1" ]; then
     fi
     echo "##############################"
     echo "Installing python dependencies"
-    /usr/local/bin/pip3 install -r /usr/local/bin/bin/tls_monitor/pipfile 
+    /usr/local/bin/pip3 install -r /usr/local/bin/tls_monitor/pipfile 
 fi
 
 if [ "$1" = "2" ]; then
