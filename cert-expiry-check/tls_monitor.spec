@@ -55,7 +55,6 @@ touch %{buildroot}/var/log/tls_monitor/app.log
 if [ "$1" = "1" ]; then
     echo "##############################"
     echo "Installing TLS Monitor"
-    fi
 fi
 
 if [ "$1" = "2" ]; then
