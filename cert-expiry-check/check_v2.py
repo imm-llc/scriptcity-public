@@ -30,6 +30,8 @@ class TLSChecker:
 
         self.init_logging()
 
+        self.logger.info("\nStarting checks at {}\n".format(str(datetime.now())))
+
         config = configparser.ConfigParser()
 
         config.read('/etc/tls_monitor/config.cfg')

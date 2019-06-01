@@ -1,0 +1,8 @@
+/var/log/tls_monitor/*.log {
+    rotate 7
+    daily
+    missingok
+    notifempty
+    create 0644 root root
+
+}

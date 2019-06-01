@@ -1,7 +1,7 @@
 %define name tls_monitor
-%define version 1.3
-%define unmangled_version 1.3
-%define unmangled_version 1.3
+%define version 1.4
+%define unmangled_version 1.4
+%define unmangled_version 1.4
 %define release 1
 %define _tmppath /tmp/rpm
 
@@ -37,6 +37,7 @@ rm -rf %{buildroot}/*
 %install
 mkdir -p %{buildroot}/usr/local/bin/tls_monitor
 mkdir -p %{buildroot}/etc/tls_monitor
+mkdir -p %{buildroot}/etc/logrotate.d/
 mkdir -p %{buildroot}/etc/cron.d
 mkdir -p %{buildroot}/var/log/tls_monitor
 
@@ -46,6 +47,7 @@ install -m 0640 %{_builddir}/%{name}/slack_alert.py %{buildroot}/usr/local/bin/t
 install -m 0640 %{_builddir}/%{name}/config.cfg %{buildroot}/etc/tls_monitor
 install -m 0640 %{_builddir}/%{name}/pipfile %{buildroot}/usr/local/bin/tls_monitor/pipfile
 install -m 0640 %{_builddir}/%{name}/tls_monitor_cron %{buildroot}/etc/cron.d/
+install -m 0644 %{_builddir}/%{name}/tls_monitor_logrotate %{buildroot}/etc/logrotate.d/
 touch %{buildroot}/var/log/tls_monitor/app.log
 
 %pre
