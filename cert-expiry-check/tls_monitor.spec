@@ -98,4 +98,5 @@ rm -rf %{buildroot}/*
 %attr(0644,root,root) /etc/cron.d/tls_monitor_cron
 %attr(0755,root,root) /var/log/tls_monitor
 %attr(0644,root,root) /var/log/tls_monitor/app.log
+/etc/logrotate.d/tls_monitor_logrotate
 %config %attr(0644,root,root) /etc/tls_monitor/config.cfg
