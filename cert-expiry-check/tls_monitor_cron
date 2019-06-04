@@ -1,1 +1,1 @@
-10 8 * * * root python36 /usr/local/bin/tls_monitor/check_v2.py
+10 8 * * * root /usr/local/bin/tls_monitor/check_v2.py >> /var/log/tls_monitor/cron.log
