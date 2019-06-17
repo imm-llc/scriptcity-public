@@ -30,4 +30,5 @@ check_main_host() {
     ping -c 3 ${CHECK_HOST} || check_verify_host
 }
 
+check_main_host
 
