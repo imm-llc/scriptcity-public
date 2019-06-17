@@ -11,7 +11,7 @@ LOG_FILE="/export/home/nz/pf_watchdog/log"
 init_shutdown_procedure() {
     echo "Initiaiting shutdown procedure due to power loss" >> ${LOG_FILE}
     # Stop netezza server
-    nzstop
+    sudo -u nz nzstop
     echo "Stopped Netezza server" >> ${LOG_FILE}
     # Stop clustering
     ssh ha2 "service heartbeat stop"
