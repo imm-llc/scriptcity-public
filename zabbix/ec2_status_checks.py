@@ -20,5 +20,28 @@ client = boto3.client(
 
 for instance_status in client.describe_instance_status()['InstanceStatuses']:
     status_dict = instance_status['InstanceStatus']
+    
     if status_dict['Status'] != "ok":
         print("DANGER WILL ROBINSON")
+    else:
+        tag_details = client.describe_tags(
+            Filters=[
+                {
+                    "Name": "resource-id",
+                    "Values": [
+                        instance_status['InstanceId']
+                    ]
+                }
+            ]
+        )
+
+        for tag in tag_details['Tags']:
+            if tag['Key'] == "Name":
+                instance_name = tag['Value']
+                print(instance_name)
+            else:
+                pass
+
+            
+
+    
