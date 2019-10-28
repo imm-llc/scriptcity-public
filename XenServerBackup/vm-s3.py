@@ -85,8 +85,8 @@ for VM_EXPORT in os.listdir(BACKUP_PATH):
             requests.post(slackWebHook, data=json.dumps(JSON_MESSAGE), headers=HEADERS)
         try:
             os.remove(VM_PATH)
-        if graylogEnabled or localLog:
-            logging.info("Removed {}".format(str(VM_PATH)))
+            if graylogEnabled or localLog:
+                logging.info("Removed {}".format(str(VM_PATH)))
         except Exception as err:
             logging.error("Failed to remove {} || {}".format(str(VM_EXPORT), str(err)))
     except Exception as err:
